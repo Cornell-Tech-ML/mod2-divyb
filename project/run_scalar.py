@@ -9,18 +9,28 @@ import minitorch
 
 
 class Network(minitorch.Module):
+    """Neural network with configurable hidden layers."""
+
     def __init__(self, hidden_layers):
         super().__init__()
-        raise NotImplementedError("Need to include this file from past assignment.")
+         #: Implement for Task 1.5.
+        #raise NotImplementedError("Need to implement for Task 1.5")
+        self.layer1 = Linear(2, hidden_layers)
+        self.layer2 = Linear(hidden_layers, hidden_layers)
+        self.layer3 = Linear(hidden_layers, 1)
 
     def forward(self, x):
+        """Forward pass for the neural network."""
         middle = [h.relu() for h in self.layer1.forward(x)]
         end = [h.relu() for h in self.layer2.forward(middle)]
         return self.layer3.forward(end)[0].sigmoid()
 
 
 class Linear(minitorch.Module):
+    """Linear layer of a network."""
+
     def __init__(self, in_size, out_size):
+        """Initialize the linear layer."""
         super().__init__()
         self.weights = []
         self.bias = []
@@ -40,7 +50,16 @@ class Linear(minitorch.Module):
             )
 
     def forward(self, inputs):
-        raise NotImplementedError("Need to include this file from past assignment.")
+        """Forward pass for the linear layer."""
+        out = []
+        # : Implement for Task 1.5.
+        #raise NotImplementedError("Need to implement for Task 1.5")
+        for j in range(len(self.bias)):
+            total = self.bias[j].value
+            for i in range(len(inputs)):
+                total = total + self.weights[i][j].value * inputs[i]
+            out.append(total)
+        return out
 
 
 def default_log_fn(epoch, total_loss, correct, losses):
