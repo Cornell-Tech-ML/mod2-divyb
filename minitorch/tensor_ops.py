@@ -34,7 +34,7 @@ class TensorOps:
     @staticmethod
     def zip(
         fn: Callable[[float, float], float],
-    ) -> Callable[[Tensor, Tensor], Tensor]:
+    ) -> Callable[["Tensor", "Tensor"], "Tensor"]:
         """Zip placeholder"""
         ...
 
@@ -88,6 +88,12 @@ class TensorBackend:
         self.mul_reduce = ops.reduce(operators.mul, 1.0)
         self.matrix_multiply = ops.matrix_multiply
         self.cuda = ops.cuda
+
+    def relu(self, t: Tensor) -> Tensor:
+        return np.maximum(0, t.storage)  # Assuming storage is a numpy array
+
+    def sigmoid(self, t: Tensor) -> Tensor:
+        return 1 / (1 + np.exp(-t.storage))  # Example implementation
 
 
 class SimpleOps(TensorOps):
@@ -261,8 +267,21 @@ def tensor_map(
         in_shape: Shape,
         in_strides: Strides,
     ) -> None:
-        # TODO: Implement for Task 2.3.
-        raise NotImplementedError("Need to implement for Task 2.3")
+        broadcasted_shape = shape_broadcast(out_shape, in_shape)
+        out_index = np.empty(len(out_shape), dtype=np.int32)
+        in_index = np.empty(len(in_shape), dtype=np.int32)
+
+        for i in range(np.prod(broadcasted_shape)):
+            # Convert the linear index to multi-dimensional index for output
+            to_index(i, out_shape, out_index)
+            # Convert the output index to input index based on broadcasting
+            broadcast_index(out_index, out_shape, in_shape, in_index)
+            # Get the position in storage and apply the function
+            out_position = index_to_position(out_index, out_strides)
+            in_position = index_to_position(in_index, in_strides)
+            out[out_position] = fn(in_storage[in_position])        
+        # : Implement for Task 2.3.
+        #raise NotImplementedError("Need to implement for Task 2.3")
 
     return _map
 
@@ -272,29 +291,6 @@ def tensor_zip(
 ) -> Callable[
     [Storage, Shape, Strides, Storage, Shape, Strides, Storage, Shape, Strides], None
 ]:
-    """Low-level implementation of tensor zip between
-    tensors with *possibly different strides*.
-
-    Simple version:
-
-    * Fill in the `out` array by applying `fn` to each
-      value of `a_storage` and `b_storage` assuming `out_shape`
-      and `a_shape` are the same size.
-
-    Broadcasted version:
-
-    * Fill in the `out` array by applying `fn` to each
-      value of `a_storage` and `b_storage` assuming `a_shape`
-      and `b_shape` broadcast to `out_shape`.
-
-    Args:
-        fn: function mapping two floats to float to apply
-
-    Returns:
-        Tensor zip function.
-
-    """
-
     def _zip(
         out: Storage,
         out_shape: Shape,
@@ -306,8 +302,27 @@ def tensor_zip(
         b_shape: Shape,
         b_strides: Strides,
     ) -> None:
-        # TODO: Implement for Task 2.3.
-        raise NotImplementedError("Need to implement for Task 2.3")
+        out_size = len(out)
+        in_index_a = np.zeros(len(a_shape), dtype=np.int32)
+        in_index_b = np.zeros(len(b_shape), dtype=np.int32)
+        out_index = np.zeros(len(out_shape), dtype=np.int32)
+
+        for i in range(out_size):
+            # Convert the linear index to multi-dimensional index for output
+            to_index(i, out_shape, out_index)
+
+            # Convert the output index to input indices based on broadcasting
+            # Ensure broadcasting logic correctly handles different shapes
+            broadcast_index(out_index, out_shape, a_shape, in_index_a)
+            broadcast_index(out_index, out_shape, b_shape, in_index_b)
+
+            # Calculate positions in storage arrays
+            a_position = index_to_position(in_index_a, a_strides)
+            b_position = index_to_position(in_index_b, b_strides)
+            out_position = index_to_position(out_index, out_strides)
+
+            # Apply the function and store the result
+            out[out_position] = fn(a_storage[a_position], b_storage[b_position])
 
     return _zip
 
@@ -337,10 +352,36 @@ def tensor_reduce(
         a_strides: Strides,
         reduce_dim: int,
     ) -> None:
-        # TODO: Implement for Task 2.3.
-        raise NotImplementedError("Need to implement for Task 2.3")
+        out_size = int(np.prod(out_shape))
+        out_index = np.zeros_like(out_shape)
 
+        for i in range(out_size):
+            to_index(i, out_shape, out_index)
+            assert out_index[reduce_dim] == 0
+            out_val = 0.0
+
+            for j in range(a_shape[reduce_dim]):
+
+                a_index = np.copy(out_index)
+                a_index[reduce_dim] = j
+
+                a_pos = index_to_position(a_index, a_strides)
+
+                if j == 0:
+                    out_val = a_storage[a_pos]
+
+                else:
+                    out_val = fn(out_val, a_storage[a_pos])
+
+            out_pos = index_to_position(out_index, out_strides)
+            out[out_pos] = out_val
     return _reduce
 
 
 SimpleBackend = TensorBackend(SimpleOps)
+
+
+
+
+
+
