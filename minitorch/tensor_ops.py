@@ -1,3 +1,5 @@
+"""Module for tensor operations including mapping, zipping, and reducing tensors."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Optional, Type
@@ -27,6 +29,8 @@ class MapProto(Protocol):
 
 
 class TensorOps:
+    """Class containing higher-order tensor operations such as map, zip, and reduce."""
+
     @staticmethod
     def map(fn: Callable[[float], float]) -> MapProto:
         """Map placeholder"""
@@ -40,7 +44,9 @@ class TensorOps:
         ...
 
     @staticmethod
-    def reduce(fn: Callable[[float, float], float], start: float = 0.0) -> Callable[[Tensor, int], Tensor]:
+    def reduce(
+        fn: Callable[[float, float], float], start: float = 0.0
+    ) -> Callable[[Tensor, int], Tensor]:
         """Higher-order tensor reduce function.
 
         Applies a reduction function over a specified dimension of a tensor.
@@ -62,6 +68,7 @@ class TensorOps:
         """Matrix multiply"""
         raise NotImplementedError("Not implemented in this assignment")
 
+    cuda = False
     cuda = False
 
 
@@ -107,33 +114,33 @@ class TensorBackend:
         self.matrix_multiply = ops.matrix_multiply
         self.cuda = ops.cuda
 
-    def relu(self, t: Tensor) -> Tensor:
-        """Applies the ReLU activation function to the input tensor.
+    # def relu(self, t: Tensor) -> Tensor:
+    #     """Applies the ReLU activation function to the input tensor.
 
-        Args:
-        ----
-            t: Input tensor.
+    #     Args:
+    #     ----
+    #         t: Input tensor.
 
-        Returns:
-        -------
-            A tensor with ReLU applied element-wise.
+    #     Returns:
+    #     -------
+    #         A tensor with ReLU applied element-wise.
 
-        """
-        return np.maximum(0, t.storage)  # Assuming storage is a numpy array
+    #     """
+    #     return np.maximum(0, t.storage)  # Assuming storage is a numpy array
 
-    def sigmoid(self, t: Tensor) -> Tensor:
-        """Applies the sigmoid activation function to the input tensor.
+    # def sigmoid(self, t: Tensor) -> Tensor:
+    #     """Applies the sigmoid activation function to the input tensor.
 
-        Args:
-        ----
-            t: Input tensor.
+    #     Args:
+    #     ----
+    #         t: Input tensor.
 
-        Returns:
-        -------
-            A tensor with sigmoid applied element-wise.
+    #     Returns:
+    #     -------
+    #         A tensor with sigmoid applied element-wise.
 
-        """
-        return 1 / (1 + np.exp(-t.storage))  # Example implementation
+    #     """
+    #     return 1 / (1 + np.exp(-t.storage))  # Example implementation
 
 
 class SimpleOps(TensorOps):
