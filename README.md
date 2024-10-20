@@ -13,6 +13,28 @@ This assignment requires the following files from the previous assignments. You 
 ```bash
 python sync_previous_module.py previous-module-dir current-module-dir
 ```
+## Simple Dataset
+![Simple Parameters](Images/Simple_ss.png)
+![Simple Logs 1](Images/Simple_logs_1.png)
+![Simple Logs 2](Images/Simple_logs_2.png)
+
+## Diag Dataset
+![Diag Parameters](Images/Diag_ss.png)
+![Diag Logs 1](Images/Diag_logs_1.png)
+![Diag Logs 2](Images/Diag_logs_2.png)
+
+
+## Split Dataset
+![Split Parameters](Images/Split_SS.png)
+![Split Logs 1](Images/Split_Logs_1.png)
+![Split Logs 2](Images/Split_Logs_2.png)
+![Split Logs 3](Images/Split_Logs_3.png)
+
+
+## XOR Dataset
+![XOR Parameters](Images/Xor_SS.png)
+![XOR Logs 1](Images/Xor_Logs_1.png)
+![XOR Logs 2](Images/Xor_Logs_2.png)
 
 The files that will be synced are:
 
