@@ -324,23 +324,27 @@ def tensor_map(
         in_shape: Shape,
         in_strides: Strides,
     ) -> None:
-        broadcasted_shape = shape_broadcast(out_shape, in_shape)
-        out_index = np.empty(len(out_shape), dtype=np.int32)
-        in_index = np.empty(len(in_shape), dtype=np.int32)
+        if len(in_shape) > len(out_shape):
+            raise ValueError(
+                "in_shape must be <= out_shape")
 
-        for i in range(np.prod(broadcasted_shape)):
-            # Convert the linear index to multi-dimensional index for output
+        out_size = int(np.prod(out_shape))
+
+        out_index = np.zeros_like(out_shape)
+        in_index = np.zeros_like(in_shape)
+
+        for i in range(out_size):
             to_index(i, out_shape, out_index)
-            # Convert the output index to input index based on broadcasting
             broadcast_index(out_index, out_shape, in_shape, in_index)
-            # Get the position in storage and apply the function
-            out_position = index_to_position(out_index, out_strides)
-            in_position = index_to_position(in_index, in_strides)
-            out[out_position] = fn(in_storage[in_position])
-        # : Implement for Task 2.3.
-        # raise NotImplementedError("Need to implement for Task 2.3")
+
+            in_pos = index_to_position(in_index, in_strides)
+            out_pos = index_to_position(out_index, out_strides)
+            out[out_pos] = fn(in_storage[in_pos])
 
     return _map
+
+    # : Implement for Task 2.3.
+    # raise NotImplementedError("Need to implement for Task 2.3")
 
 
 def tensor_zip(
@@ -453,3 +457,4 @@ def tensor_reduce(
 
 
 SimpleBackend = TensorBackend(SimpleOps)
+
