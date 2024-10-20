@@ -19,6 +19,8 @@ if TYPE_CHECKING:
 
 
 class MapProto(Protocol):
+    """Protocol for a map function that applies a callable to a Tensor."""
+    
     def __call__(self, x: Tensor, out: Optional[Tensor] = ..., /) -> Tensor:
         """Call a map function"""
         ...
@@ -40,7 +42,20 @@ class TensorOps:
     @staticmethod
     def reduce(
         fn: Callable[[float, float], float], start: float = 0.0
-    ) -> Callable[[Tensor, int], Tensor]: ...
+    ) -> Callable[[Tensor, int], Tensor]:
+        """Higher-order tensor reduce function.
+
+        Applies a reduction function over a specified dimension of a tensor.
+
+        Args:
+            fn: Function that takes two floats and returns a float.
+            start: Initial value for the reduction.
+
+        Returns:
+            A callable that takes a Tensor and a dimension index, returning a reduced Tensor.
+            
+        """
+        ...
 
     @staticmethod
     def matrix_multiply(a: Tensor, b: Tensor) -> Tensor:
@@ -51,6 +66,8 @@ class TensorOps:
 
 
 class TensorBackend:
+    """Class to construct a tensor backend using specified tensor operations."""
+
     def __init__(self, ops: Type[TensorOps]):
         """Dynamically construct a tensor backend based on a `tensor_ops` object
         that implements map, zip, and reduce higher-order functions.
@@ -91,13 +108,33 @@ class TensorBackend:
         self.cuda = ops.cuda
 
     def relu(self, t: Tensor) -> Tensor:
+        """Applies the ReLU activation function to the input tensor.
+
+        Args:
+            t: Input tensor.
+
+        Returns:
+            A tensor with ReLU applied element-wise.
+            
+        """
         return np.maximum(0, t.storage)  # Assuming storage is a numpy array
 
     def sigmoid(self, t: Tensor) -> Tensor:
+        """Applies the sigmoid activation function to the input tensor.
+
+        Args:
+            t: Input tensor.
+
+        Returns:
+            A tensor with sigmoid applied element-wise.
+            
+        """
         return 1 / (1 + np.exp(-t.storage))  # Example implementation
 
 
 class SimpleOps(TensorOps):
+    """Class implementing simple tensor operations."""
+    
     @staticmethod
     def map(fn: Callable[[float], float]) -> MapProto:
         """Higher-order tensor map function ::
@@ -300,6 +337,18 @@ def tensor_zip(
 ) -> Callable[
     [Storage, Shape, Strides, Storage, Shape, Strides, Storage, Shape, Strides], None
 ]:
+    """Low-level implementation of tensor zip.
+
+    This function applies a binary operation (fn) to two input tensors (a and b)
+    and stores the result in the output tensor. It handles broadcasting of shapes.
+
+    Args:
+        fn: A function that takes two floats and returns a float.
+
+    Returns:
+        A tensor zip function that performs the operation on the input tensors.
+
+    """
     def _zip(
         out: Storage,
         out_shape: Shape,
