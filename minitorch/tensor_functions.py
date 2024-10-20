@@ -101,7 +101,7 @@ class Neg(Function):
 
 class Inv(Function):
     """Inverse function for tensors."""
-    
+
     @staticmethod
     def forward(ctx: Context, t1: Tensor) -> Tensor:
         """Compute the inverse of the input tensor."""
@@ -320,16 +320,6 @@ class Sum(Function):
         return grad_output, 0.0
 
 
-class All(Function):
-    """Function to check if all elements are true along a specified dimension."""
-    
-    @staticmethod
-    def forward(ctx: Context, a: Tensor, dim: Tensor) -> Tensor:
-        if dim is not None:
-            return a.f.mul_reduce(a, int(dim.item()))
-        else:
-            return a.f.mul_reduce(a.contiguous().view(int(operators.prod(a.shape))), 0)
-
 
 class LT(Function):
     """Less than comparison function for tensors."""
@@ -445,6 +435,17 @@ class View(Function):
 
     @staticmethod
     def forward(ctx: Context, a: Tensor, shape: Tensor) -> Tensor:
+        """Reshape the input tensor to the specified shape.
+
+        Args:
+            ctx (Context): The context for storing information.
+            a (Tensor): The input tensor to reshape.
+            shape (Tensor): The desired shape for the output tensor.
+
+        Returns:
+            Tensor: A new tensor with the specified shape.
+            
+        """
         ctx.save_for_backward(a.shape)
         assert a._tensor.is_contiguous(), "Must be contiguous to view"
         shape2 = [int(shape[i]) for i in range(shape.size)]
@@ -461,6 +462,7 @@ class View(Function):
                 grad_output._tensor._storage, original, backend=grad_output.backend
             ),
             0.0,
+        )
         )
 
 
