@@ -240,8 +240,8 @@ class SimpleOps(TensorOps):
     ) -> Callable[["Tensor", int], "Tensor"]:
         """Higher-order tensor reduce function. ::
 
-          fn_reduce = reduce(fn)
-          out = fn_reduce(a, dim)
+        fn_reduce = reduce(fn)
+        out = fn_reduce(a, dim)
 
         Simple version ::
 
@@ -254,12 +254,13 @@ class SimpleOps(TensorOps):
         Args:
         ----
             fn: function from two floats-to-float to apply
-            a (:class:`TensorData`): tensor to reduce over
+            start (float): starting value for reduction
+            a (:class:TensorData): tensor to reduce over
             dim (int): int of dim to reduce
 
         Returns:
         -------
-            :class:`TensorData` : new tensor
+            :class:TensorData : new tensor
 
         """
         f = tensor_reduce(fn)
@@ -325,8 +326,7 @@ def tensor_map(
         in_strides: Strides,
     ) -> None:
         if len(in_shape) > len(out_shape):
-            raise ValueError(
-                "in_shape must be <= out_shape")
+            raise ValueError("in_shape must be <= out_shape")
 
         out_size = int(np.prod(out_shape))
 
@@ -457,4 +457,3 @@ def tensor_reduce(
 
 
 SimpleBackend = TensorBackend(SimpleOps)
-

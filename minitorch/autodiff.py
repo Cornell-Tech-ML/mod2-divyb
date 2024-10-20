@@ -41,8 +41,9 @@ class Variable(Protocol):
         """Accumulates the derivative for this variable.
 
         Args:
+        ----
             x: The derivative value to accumulate.
-            
+
         """
         pass
 
