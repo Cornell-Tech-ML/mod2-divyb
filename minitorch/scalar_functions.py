@@ -40,22 +40,23 @@ class ScalarFunction:
     def apply(cls, vals: ScalarLike) -> Scalar:
         """Apply the scalar function to the given values and return a Scalar."""
         raw_vals = []
-        scalars = []
+        need_grad = False
         for v in vals:
-            if isinstance(v, minitorch.scalar.Scalar):
-                scalars.append(v)
-                raw_vals.append(v.data)
-            else:
-                scalars.append(minitorch.scalar.Scalar(v))
-                raw_vals.append(v)
+            if v.requires_grad():
+                need_grad = True
+            raw_vals.append(v.detach())
 
-        ctx = Context(vals)
-        c = cls.forward(ctx, *raw_vals)
-        assert isinstance(c, float), "Expected return type float got %s" % (type(c))
-        # Create a new variable for the result with a new history.
-        back = minitorch.scalar.ScalarHistory(cls, ctx, scalars)
-        return minitorch.scalar.Scalar(c, back)
+        # Create the context.
+        ctx = Context(not need_grad)
 
+        # Call forward with the variables.
+        c = cls._forward(ctx, *raw_vals)
+
+        # Create a new variable from the result with a new history.
+        back = None
+        if need_grad:
+            back = minitorch.History(cls, ctx, vals)
+        return minitorch.Tensor(c._tensor, back, backend=c.backend)
 
 # Example
 class Add(ScalarFunction):
@@ -220,3 +221,13 @@ class EQ(ScalarFunction):
     def backward(ctx: Context, d_output: float) -> Tuple[float, float]:
         """Compute the gradient of the output with respect to the inputs."""
         return 0.0, 0.0
+    
+class IsClose(ScalarFunction):
+    """Check if two tensors are element-wise equal within a tolerance."""
+
+    @staticmethod
+    def forward(ctx: Context, a: Tensor, b: Tensor) -> Tensor:
+        """Check if two tensors are element-wise equal within a tolerance."""
+        ctx.save_for_backward(a.shape, b.shape)
+        return a.f.is_close_zip(a, b)
+

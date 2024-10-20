@@ -334,15 +334,6 @@ class Tensor:
         """
         return self._tensor.dims
 
-    def _ensure_tensor(self, b: TensorLike) -> Tensor:
-        """Turns a python number into a tensor with the same backend."""
-        if isinstance(b, (int, float)):
-            c = Tensor.make([b], (1,), backend=self.backend)
-        else:
-            b._type_(self.backend)
-            c = b
-        return c
-
     # Functions
     # TODO: Implement for Task 2.3.
 
