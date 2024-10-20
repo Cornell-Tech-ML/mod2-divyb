@@ -49,7 +49,7 @@ class TensorOps:
 
         Args:
             fn: Function that takes two floats and returns a float.
-            start: Initial value for the reduction.
+            start: Initial value for the reduction (default is 0.0).
 
         Returns:
             A callable that takes a Tensor and a dimension index, returning a reduced Tensor.
