@@ -95,9 +95,11 @@ class Tensor:
         self.f = backend
 
     def requires_grad_(self, x: bool) -> None:
+        """Set the tensor to require gradients."""
         self.history = History()
 
     def requires_grad(self) -> bool:
+        """Check if the tensor requires gradients."""
         return self.history is not None
 
     def to_numpy(self) -> npt.NDArray[np.float64]:
@@ -117,10 +119,9 @@ class Tensor:
         return c
 
     def item(self) -> float:
-        """Convert a 1-element tensor to a float"""
+        """Convert a 1-element tensor to a float."""
         assert self.size == 1
-        x: float = self._tensor._storage[0]
-        return x
+        return self[0]
 
     def contiguous(self) -> Tensor:
         """Return a contiguous tensor with the same data"""
@@ -194,6 +195,17 @@ class Tensor:
         # END CODE CHANGE (2021)
 
     def zeros(self, shape: Optional[UserShape] = None) -> Tensor:
+        """Create a tensor filled with zeros of the specified shape.
+        
+        Args:
+            shape (Optional[UserShape]): The shape of the tensor to create. 
+                                          If None, a tensor with the current shape is created.
+        
+        Returns:
+            Tensor: A tensor filled with zeros.
+            
+        """
+
         def zero(shape: UserShape) -> Tensor:
             return Tensor.make(
                 [0.0] * int(operators.prod(shape)), shape, backend=self.backend
@@ -239,14 +251,25 @@ class Tensor:
         return self.history is not None and self.history.last_fn is None
 
     def is_constant(self) -> bool:
+        """Check if the tensor is a constant (no history)."""
         return self.history is None
 
     @property
     def parents(self) -> Iterable[Variable]:
+        """Returns the inputs of the current variable's history."""
         assert self.history is not None
         return self.history.inputs
 
     def chain_rule(self, d_output: Any) -> Iterable[Tuple[Variable, Any]]:
+        """Compute the chain rule for backpropagation.
+
+        Args:
+            d_output: The gradient of the output with respect to the loss.
+
+        Returns:
+            An iterable of tuples containing the input variables and their corresponding gradients.
+
+        """
         h = self.history
         assert h is not None
         assert h.last_fn is not None
@@ -260,6 +283,13 @@ class Tensor:
         ]
 
     def backward(self, grad_output: Optional[Tensor] = None) -> None:
+        """Perform backpropagation on the tensor.
+
+        Args:
+            grad_output (Optional[Tensor]): The gradient of the output with respect to the loss. 
+            If None, it defaults to a tensor of ones for scalar outputs.
+            
+        """
         if grad_output is None:
             assert self.shape == (1,), "Must provide grad_output if non-scalar"
             grad_output = Tensor.make([1.0], (1,), backend=self.backend)
@@ -345,39 +375,62 @@ class Tensor:
         return Sum.apply(self, dim)
 
     def relu(self) -> Tensor:
+        """Applies the ReLU activation function element-wise."""
         return ReLU.apply(self)
 
     def sigmoid(self) -> Tensor:
+        """Applies the sigmoid activation function element-wise."""
         return Sigmoid.apply(self)
 
     def log(self) -> Tensor:
+        """Applies the natural logarithm element-wise."""
         return Log.apply(self)
 
     def exp(self) -> Tensor:
+        """Applies the exponential function element-wise."""
         return Exp.apply(self)
 
     def sum(self, dim: Optional[int] = None) -> Tensor:
+        """Compute the sum over dimension `dim`."""
         return Sum.apply(self, dim)
 
     def all(self, dim: Optional[int] = None) -> Tensor:
+        """Compute the logical AND over the specified dimension.
+
+        Args:
+            dim (Optional[int]): The dimension to compute the logical AND over. 
+                                 If None, computes over the entire tensor.
+
+        Returns:
+            Tensor: A tensor containing the result of the logical AND operation.
+            
+        """
         if dim is None:
             return All.apply(self.view(self.size), self._ensure_tensor(0))
         else:
             return All.apply(self, self._ensure_tensor(dim))
 
     def is_close(self, y: Tensor) -> Tensor:
+        """Check if the current tensor is close to another tensor element-wise.
+
+        Args:
+            y (Tensor): The tensor to compare against.
+
+        Returns:
+            Tensor: A tensor containing boolean values indicating 
+                    whether each element is close.
+                    
+        """
         return IsClose.apply(self, y)
 
     def item(self) -> float:
+        """Convert a 1-element tensor to a float."""
         assert self.size == 1
         return self[0]
 
     def sum(self, dim: Optional[int] = None) -> Tensor:
-        """Compute the sum over dimension `dim`"""
-        if dim is None:
-            return Sum.apply(self.contiguous().view(self.size), self._ensure_tensor(0))
-        else:
-            return Sum.apply(self, self._ensure_tensor(dim))
+        """Compute the sum over dimension `dim`."""
+        return Sum.apply(self, dim)
 
     def mean(self, dim: Optional[int] = None) -> Tensor:
         """Compute the mean over dimension `dim`"""
@@ -397,3 +450,4 @@ class Tensor:
     def zero_grad_(self) -> None:  # pragma: no cover
         """Reset the derivative on this variable."""
         self.grad = None
+

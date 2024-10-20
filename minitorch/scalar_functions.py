@@ -75,58 +75,67 @@ class Add(ScalarFunction):
 # Log function
 class Log(ScalarFunction):
     """Logarithm function."""
-
+    
     @staticmethod
     def forward(ctx: Context, a: float) -> float:
+        """Compute the logarithm of a given value."""
         return operators.log(a)
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> Tuple[float, ...]:
+        """Compute the gradient of the logarithm with respect to the input."""
         (a,) = ctx.saved_values
         return (d_output / a,)
 
 
 # Multiply function
 class Mul(ScalarFunction):
-    """Multiplication function"""
-
+    """Multiplication function."""
+    
     @staticmethod
     def forward(ctx: Context, a: float, b: float) -> float:
+        """Compute the product of two values."""
         assert a
         ctx.save_for_backward(a, b)
         return a * b
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> Tuple[float, float]:
+        """Compute the gradients of the product with respect to the inputs."""
         a, b = ctx.saved_values
         return b * d_output, a * d_output
 
 
 # Inverse function
 class Inv(ScalarFunction):
-    """Inverse function"""
-
+    """Inverse function."""
+    
     @staticmethod
     def forward(ctx: Context, a: float) -> float:
+        """Compute the inverse of a given value."""
         assert a
         ctx.save_for_backward(a)
         return 1.0 / a
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> float:
+        """Compute the gradient of the inverse with respect to the input."""
         (a,) = ctx.saved_values
         return -d_output / (a**2)
 
 
+# Negation function
 class Neg(ScalarFunction):
-    """Negation function"""
-
+    """Negation function."""
+    
     @staticmethod
     def forward(ctx: Context, a: float) -> float:
+        """Negate the input value."""
         return -a
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> float:
+        """Compute the gradient of the negation with respect to the input."""
         return -d_output
 
 
@@ -136,12 +145,14 @@ class Sigmoid(ScalarFunction):
 
     @staticmethod
     def forward(ctx: Context, a: float) -> float:
+        """Compute the sigmoid of a given value."""
         out = operators.sigmoid(a)
         ctx.save_for_backward(out)
         return out
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> Tuple[float, ...]:
+        """Compute the gradient of the sigmoid with respect to the input."""  
         out = ctx.saved_values[0]
         return (d_output * out * (1 - out),)
 
@@ -152,11 +163,13 @@ class ReLU(ScalarFunction):
 
     @staticmethod
     def forward(ctx: Context, a: float) -> float:
+        """Compute the ReLU of a given value."""
         ctx.save_for_backward(a)
         return operators.relu(a)
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> float:
+        """Compute the gradient of the output with respect to the inputs."""        
         (a,) = ctx.saved_values
         return d_output * (a > 0)
 
@@ -167,12 +180,14 @@ class Exp(ScalarFunction):
 
     @staticmethod
     def forward(ctx: Context, a: float) -> float:
+        """Compute the exponential of a given value."""
         out = operators.exp(a)
         ctx.save_for_backward(out)
         return out
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> Tuple[float, ...]:
+        """Compute the gradient of the output with respect to the inputs."""
         out = ctx.saved_values[0]
         return (d_output * out,)
 
@@ -183,10 +198,12 @@ class LT(ScalarFunction):
 
     @staticmethod
     def forward(ctx: Context, a: float, b: float) -> float:
+        """Compute the less-than comparison between two values."""
         return 1.0 if a < b else 0.0
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> Tuple[float, float]:
+        """Compute the gradient of the output with respect to the inputs."""
         return 0.0, 0.0
 
 
@@ -196,8 +213,12 @@ class EQ(ScalarFunction):
 
     @staticmethod
     def forward(ctx: Context, a: float, b: float) -> float:
+        """Compute the equality comparison between two values."""
         return 1.0 if a == b else 0.0
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> Tuple[float, float]:
+        """Compute the gradient of the output with respect to the inputs."""
         return 0.0, 0.0
+
+
