@@ -75,7 +75,7 @@ class Add(ScalarFunction):
 # Log function
 class Log(ScalarFunction):
     """Logarithm function."""
-    
+
     @staticmethod
     def forward(ctx: Context, a: float) -> float:
         """Compute the logarithm of a given value."""
@@ -91,7 +91,7 @@ class Log(ScalarFunction):
 # Multiply function
 class Mul(ScalarFunction):
     """Multiplication function."""
-    
+
     @staticmethod
     def forward(ctx: Context, a: float, b: float) -> float:
         """Compute the product of two values."""
@@ -109,7 +109,7 @@ class Mul(ScalarFunction):
 # Inverse function
 class Inv(ScalarFunction):
     """Inverse function."""
-    
+
     @staticmethod
     def forward(ctx: Context, a: float) -> float:
         """Compute the inverse of a given value."""
@@ -127,7 +127,7 @@ class Inv(ScalarFunction):
 # Negation function
 class Neg(ScalarFunction):
     """Negation function."""
-    
+
     @staticmethod
     def forward(ctx: Context, a: float) -> float:
         """Negate the input value."""
@@ -152,7 +152,7 @@ class Sigmoid(ScalarFunction):
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> Tuple[float, ...]:
-        """Compute the gradient of the sigmoid with respect to the input."""  
+        """Compute the gradient of the sigmoid with respect to the input."""
         out = ctx.saved_values[0]
         return (d_output * out * (1 - out),)
 
@@ -169,7 +169,7 @@ class ReLU(ScalarFunction):
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> float:
-        """Compute the gradient of the output with respect to the inputs."""        
+        """Compute the gradient of the output with respect to the inputs."""
         (a,) = ctx.saved_values
         return d_output * (a > 0)
 
@@ -220,5 +220,3 @@ class EQ(ScalarFunction):
     def backward(ctx: Context, d_output: float) -> Tuple[float, float]:
         """Compute the gradient of the output with respect to the inputs."""
         return 0.0, 0.0
-
-

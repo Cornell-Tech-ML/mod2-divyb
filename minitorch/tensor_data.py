@@ -214,7 +214,7 @@ class TensorData:
         Returns:
         -------
             broadcasted shape
-            
+
         """
         return shape_broadcast(shape_a, shape_b)
 
@@ -251,7 +251,6 @@ class TensorData:
 
         # Call fast indexing.
         return index_to_position(array(index), self._strides)
-        
 
     def indices(self) -> Iterable[UserIndex]:
         """Generate all valid indices for the tensor.
@@ -259,7 +258,7 @@ class TensorData:
         Yields
         ------
             UserIndex: A tuple representing a valid index in the tensor.
-            
+
         """
         lshape: Shape = array(self.shape)
         out_index: Index = array(self.shape)
@@ -281,7 +280,7 @@ class TensorData:
         Returns:
         -------
             float: The value at the specified index.
-            
+
         """
         x: float = self._storage[self.index(key)]
         return x
@@ -297,7 +296,7 @@ class TensorData:
         Returns:
         -------
             None
-            
+
         """
         self._storage[self.index(key)] = val
 

@@ -196,14 +196,16 @@ class Tensor:
 
     def zeros(self, shape: Optional[UserShape] = None) -> Tensor:
         """Create a tensor filled with zeros of the specified shape.
-        
+
         Args:
-            shape (Optional[UserShape]): The shape of the tensor to create. 
+        ----
+            shape (Optional[UserShape]): The shape of the tensor to create.
                                           If None, a tensor with the current shape is created.
-        
+
         Returns:
+        -------
             Tensor: A tensor filled with zeros.
-            
+
         """
 
         def zero(shape: UserShape) -> Tensor:
@@ -264,9 +266,11 @@ class Tensor:
         """Compute the chain rule for backpropagation.
 
         Args:
+        ----
             d_output: The gradient of the output with respect to the loss.
 
         Returns:
+        -------
             An iterable of tuples containing the input variables and their corresponding gradients.
 
         """
@@ -286,9 +290,10 @@ class Tensor:
         """Perform backpropagation on the tensor.
 
         Args:
-            grad_output (Optional[Tensor]): The gradient of the output with respect to the loss. 
+        ----
+            grad_output (Optional[Tensor]): The gradient of the output with respect to the loss.
             If None, it defaults to a tensor of ones for scalar outputs.
-            
+
         """
         if grad_output is None:
             assert self.shape == (1,), "Must provide grad_output if non-scalar"
@@ -353,9 +358,6 @@ class Tensor:
     def __sub__(self, b: TensorLike):
         return Add.apply(self, -self._ensure_tensor(b))
 
-    def __rsub__(self, b: TensorLike):
-        return Sub.apply(self._ensure_tensor(b), self)
-
     def __mul__(self, b: TensorLike):
         return Mul.apply(self, self._ensure_tensor(b))
 
@@ -398,12 +400,14 @@ class Tensor:
         """Compute the logical AND over the specified dimension.
 
         Args:
-            dim (Optional[int]): The dimension to compute the logical AND over. 
+        ----
+            dim (Optional[int]): The dimension to compute the logical AND over.
                                  If None, computes over the entire tensor.
 
         Returns:
+        -------
             Tensor: A tensor containing the result of the logical AND operation.
-            
+
         """
         if dim is None:
             return All.apply(self.view(self.size), self._ensure_tensor(0))
@@ -414,12 +418,14 @@ class Tensor:
         """Check if the current tensor is close to another tensor element-wise.
 
         Args:
+        ----
             y (Tensor): The tensor to compare against.
 
         Returns:
-            Tensor: A tensor containing boolean values indicating 
+        -------
+            Tensor: A tensor containing boolean values indicating
                     whether each element is close.
-                    
+
         """
         return IsClose.apply(self, y)
 

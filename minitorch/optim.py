@@ -29,7 +29,7 @@ class SGD(Optimizer):
             if hasattr(p.value, "grad"):
                 if p.value.grad is not None:
                     p.value.grad = None
-             
+
     def step(self) -> None:
         """Perform a single optimization step."""
         for p in self.parameters:

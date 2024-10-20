@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 class MapProto(Protocol):
     """Protocol for a map function that applies a callable to a Tensor."""
-    
+
     def __call__(self, x: Tensor, out: Optional[Tensor] = ..., /) -> Tensor:
         """Call a map function"""
         ...
@@ -40,21 +40,20 @@ class TensorOps:
         ...
 
     @staticmethod
-    def reduce(
-        fn: Callable[[float, float], float], start: float = 0.0
-    ) -> Callable[[Tensor, int], Tensor]:
+    def reduce(fn: Callable[[float, float], float], start: float = 0.0) -> Callable[[Tensor, int], Tensor]:
         """Higher-order tensor reduce function.
 
         Applies a reduction function over a specified dimension of a tensor.
 
         Args:
-            fn: Function that takes two floats and returns a float.
-            start: Initial value for the reduction (default is 0.0).
-                    This value is used as the starting point for the reduction operation.
+        ----
+        fn: The right-most variable.
+        start: The derivative we want to propagate backward to the leaves.
 
         Returns:
+        -------
             A callable that takes a Tensor and a dimension index, returning a reduced Tensor.
-            
+
         """
         ...
 
@@ -112,11 +111,13 @@ class TensorBackend:
         """Applies the ReLU activation function to the input tensor.
 
         Args:
+        ----
             t: Input tensor.
 
         Returns:
+        -------
             A tensor with ReLU applied element-wise.
-            
+
         """
         return np.maximum(0, t.storage)  # Assuming storage is a numpy array
 
@@ -124,18 +125,20 @@ class TensorBackend:
         """Applies the sigmoid activation function to the input tensor.
 
         Args:
+        ----
             t: Input tensor.
 
         Returns:
+        -------
             A tensor with sigmoid applied element-wise.
-            
+
         """
         return 1 / (1 + np.exp(-t.storage))  # Example implementation
 
 
 class SimpleOps(TensorOps):
     """Class implementing simple tensor operations."""
-    
+
     @staticmethod
     def map(fn: Callable[[float], float]) -> MapProto:
         """Higher-order tensor map function ::
@@ -344,12 +347,15 @@ def tensor_zip(
     and stores the result in the output tensor. It handles broadcasting of shapes.
 
     Args:
+    ----
         fn: A function that takes two floats and returns a float.
 
     Returns:
+    -------
         A tensor zip function that performs the operation on the input tensors.
 
     """
+
     def _zip(
         out: Storage,
         out_shape: Shape,
@@ -440,4 +446,3 @@ def tensor_reduce(
 
 
 SimpleBackend = TensorBackend(SimpleOps)
-

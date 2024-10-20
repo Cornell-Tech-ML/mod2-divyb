@@ -36,7 +36,7 @@ variable_count = 1
 
 class Variable(Protocol):
     """Protocol for defining a variable in the computation graph."""
-    
+
     @property
     def unique_id(self) -> int:
         """Returns the unique identifier for the variable."""
@@ -59,11 +59,13 @@ class Variable(Protocol):
         """Computes the chain rule for backpropagation.
 
         Args:
+        ----
             d_output: The derivative of the output with respect to this variable.
 
         Returns:
+        -------
             An iterable of tuples containing the parent variables and their corresponding derivatives.
-            
+
         """
         ...
 
@@ -105,8 +107,8 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
     ----
     variable: The right-most variable.
     deriv: The derivative we want to propagate backward to the leaves.
-        
-    No return. Should write to its results to the derivative values 
+
+    No return. Should write to its results to the derivative values
     of each leaf through `accumulate_derivative`.
 
     """
