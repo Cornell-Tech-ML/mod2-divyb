@@ -282,25 +282,25 @@ class Tensor:
 
         """
         return self._tensor.shape
-    
+
     @property
     def size(self) -> int:
-        """
-        Returns:
-             int : size of the tensor
+        """Returns
+        int : size of the tensor
+
         """
         return self._tensor.size
 
     @property
     def dims(self) -> int:
-        """
-        Returns:
-             int : dimensionality of the tensor
+        """Returns
+        int : dimensionality of the tensor
+
         """
         return self._tensor.dims
 
     def _ensure_tensor(self, b: TensorLike) -> Tensor:
-        "Turns a python number into a tensor with the same backend."
+        """Turns a python number into a tensor with the same backend."""
         if isinstance(b, (int, float)):
             c = Tensor.make([b], (1,), backend=self.backend)
         else:
@@ -335,6 +335,9 @@ class Tensor:
     def __lt__(self, b: TensorLike):
         return LT.apply(self, self._ensure_tensor(b))
 
+    def __gt__(self, b: TensorLike) -> Tensor:
+        return LT.apply(self._ensure_tensor(b), self)
+
     def __eq__(self, b: TensorLike):
         return EQ.apply(self, self._ensure_tensor(b))
 
@@ -355,52 +358,42 @@ class Tensor:
 
     def sum(self, dim: Optional[int] = None) -> Tensor:
         return Sum.apply(self, dim)
-    
+
     def all(self, dim: Optional[int] = None) -> Tensor:
         if dim is None:
             return All.apply(self.view(self.size), self._ensure_tensor(0))
         else:
             return All.apply(self, self._ensure_tensor(dim))
-        
+
     def is_close(self, y: Tensor) -> Tensor:
         return IsClose.apply(self, y)
-    
+
     def item(self) -> float:
         assert self.size == 1
         return self[0]
-    
+
     def sum(self, dim: Optional[int] = None) -> Tensor:
-        "Compute the sum over dimension `dim`"
+        """Compute the sum over dimension `dim`"""
         if dim is None:
             return Sum.apply(self.contiguous().view(self.size), self._ensure_tensor(0))
         else:
             return Sum.apply(self, self._ensure_tensor(dim))
-        
+
     def mean(self, dim: Optional[int] = None) -> Tensor:
-        "Compute the mean over dimension `dim`"
+        """Compute the mean over dimension `dim`"""
         if dim is not None:
             return self.sum(dim) / self.shape[dim]
         else:
             return self.sum() / self.size
-        
+
     def permute(self, *order: int) -> Tensor:
-        "Permute tensor dimensions to *order"
+        """Permute tensor dimensions to *order"""
         return Permute.apply(self, tensor(list(order)))
-    
+
     def view(self, *shape: int) -> Tensor:
-        "Change the shape of the tensor to a new shape with the same size"
+        """Change the shape of the tensor to a new shape with the same size"""
         return View.apply(self, tensor(list(shape)))
-    
+
     def zero_grad_(self) -> None:  # pragma: no cover
-        """
-        Reset the derivative on this variable.
-        """
-        self.grad = None    
-        
-    
-
-
-  
-
-    
-
+        """Reset the derivative on this variable."""
+        self.grad = None
