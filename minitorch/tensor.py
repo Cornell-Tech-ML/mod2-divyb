@@ -373,8 +373,8 @@ class Tensor:
     def __eq__(self, b: TensorLike):
         return EQ.apply(self, self._ensure_tensor(b))
 
-    def __sum__(self, dim: Optional[int] = None) -> Tensor:
-        return Sum.apply(self, dim)
+    # def __sum__(self, dim: Optional[int] = None) -> Tensor:
+    #     return Sum.apply(self, dim)
 
     def relu(self) -> Tensor:
         """Applies the ReLU activation function element-wise."""
