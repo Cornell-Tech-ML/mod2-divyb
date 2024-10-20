@@ -393,8 +393,11 @@ class Tensor:
         return Exp.apply(self)
 
     def sum(self, dim: Optional[int] = None) -> Tensor:
-        """Compute the sum over dimension `dim`."""
-        return Sum.apply(self, dim)
+        """Compute the sum over dimension `dim`"""
+        if dim is None:
+            return Sum.apply(self.contiguous().view(self.size), self._ensure_tensor(0))
+        else:
+            return Sum.apply(self, self._ensure_tensor(dim))
 
     def all(self, dim: Optional[int] = None) -> Tensor:
         """Compute the logical AND over the specified dimension.
