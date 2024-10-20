@@ -26,9 +26,6 @@ python sync_previous_module.py previous-module-dir current-module-dir
 
 ## Split Dataset
 ![Split Parameters](Images/Split_SS.png)
-![Split Logs 1](Images/Split_Logs_1.png)
-![Split Logs 2](Images/Split_Logs_2.png)
-![Split Logs 3](Images/Split_Logs_3.png)
 
 
 ## XOR Dataset
