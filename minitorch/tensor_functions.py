@@ -299,7 +299,7 @@ class Sum(Function):
     """Sum function for tensors."""
     
     @staticmethod
-    def forward(ctx: Context, t1: Tensor, dim: int) -> Tensor:
+    def forward(ctx: Context, t1: Tensor, dim: Tensor) -> Tensor:
         """Compute the sum of the input tensor along the specified dimension."""
         ctx.save_for_backward(t1.shape, dim)
         return t1.f.add_reduce(t1, int(dim.item()))
