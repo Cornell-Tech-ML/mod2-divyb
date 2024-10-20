@@ -444,7 +444,7 @@ class View(Function):
 
         Returns:
             Tensor: A new tensor with the specified shape.
-            
+
         """
         ctx.save_for_backward(a.shape)
         assert a._tensor.is_contiguous(), "Must be contiguous to view"
@@ -463,8 +463,6 @@ class View(Function):
             ),
             0.0,
         )
-        )
-
 
 class Copy(Function):
     """Identity function for tensors, returning the input tensor as is."""

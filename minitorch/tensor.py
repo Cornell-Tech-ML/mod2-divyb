@@ -423,15 +423,6 @@ class Tensor:
         """
         return IsClose.apply(self, y)
 
-    def item(self) -> float:
-        """Convert a 1-element tensor to a float."""
-        assert self.size == 1
-        return self[0]
-
-    def sum(self, dim: Optional[int] = None) -> Tensor:
-        """Compute the sum over dimension `dim`."""
-        return Sum.apply(self, dim)
-
     def mean(self, dim: Optional[int] = None) -> Tensor:
         """Compute the mean over dimension `dim`"""
         if dim is not None:
@@ -450,4 +441,3 @@ class Tensor:
     def zero_grad_(self) -> None:  # pragma: no cover
         """Reset the derivative on this variable."""
         self.grad = None
-

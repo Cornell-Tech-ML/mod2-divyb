@@ -50,6 +50,7 @@ class TensorOps:
         Args:
             fn: Function that takes two floats and returns a float.
             start: Initial value for the reduction (default is 0.0).
+                    This value is used as the starting point for the reduction operation.
 
         Returns:
             A callable that takes a Tensor and a dimension index, returning a reduced Tensor.
@@ -439,3 +440,4 @@ def tensor_reduce(
 
 
 SimpleBackend = TensorBackend(SimpleOps)
+
