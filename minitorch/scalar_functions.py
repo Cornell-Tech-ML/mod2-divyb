@@ -28,14 +28,17 @@ class ScalarFunction:
 
     @classmethod
     def backward(cls, ctx: Context, d_output: float) -> Tuple[float, ...]:
+        """Compute the gradient of the output with respect to the inputs."""
         return wrap_tuple(cls.backward(ctx, d_output))  # type: ignore
 
     @classmethod
     def forward(cls, ctx: Context, *inputs: float) -> float:
+        """Compute the output of the function given the inputs."""
         return cls.forward(ctx, *inputs)  # type: ignore
 
     @classmethod
     def apply(cls, vals: ScalarLike) -> Scalar:
+        """Apply the scalar function to the given values and return a Scalar."""
         raw_vals = []
         scalars = []
         for v in vals:
@@ -60,15 +63,19 @@ class Add(ScalarFunction):
 
     @staticmethod
     def forward(ctx: Context, a: float, b: float) -> float:
+        """Compute the gradient of the output with respect to the inputs for addition."""
         return a + b
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> Tuple[float, ...]:
+        """Compute the gradient of the output with respect to the inputs for addition."""
         return d_output, d_output
 
 
 # Log function
 class Log(ScalarFunction):
+    """Logarithm function."""
+
     @staticmethod
     def forward(ctx: Context, a: float) -> float:
         return operators.log(a)

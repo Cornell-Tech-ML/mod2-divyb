@@ -5,16 +5,21 @@ from .scalar import Scalar
 
 
 class Optimizer:
+    """Base class for all optimizers."""
+
     def __init__(self, parameters: Sequence[Parameter]):
         self.parameters = parameters
 
 
 class SGD(Optimizer):
+    """Stochastic Gradient Descent optimizer."""
+
     def __init__(self, parameters: Sequence[Parameter], lr: float = 1.0):
         super().__init__(parameters)
         self.lr = lr
 
     def zero_grad(self) -> None:
+        """Reset the gradients of all parameters to zero."""
         for p in self.parameters:
             if p.value is None:
                 continue
@@ -24,8 +29,9 @@ class SGD(Optimizer):
             if hasattr(p.value, "grad"):
                 if p.value.grad is not None:
                     p.value.grad = None
-
+             
     def step(self) -> None:
+        """Perform a single optimization step."""
         for p in self.parameters:
             if p.value is None:
                 continue
