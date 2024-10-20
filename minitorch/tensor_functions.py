@@ -30,7 +30,7 @@ def wrap_tuple(x: Any) -> tuple:  # type: ignore
 # Constructors
 class Function:
     """Base class for all tensor operations in the autodifferentiation framework."""
-
+    
     @classmethod
     def _backward(cls, ctx: Context, grad_out: Tensor) -> Tuple[Tensor, ...]:
         """Perform the backward pass for the function."""
@@ -69,20 +69,18 @@ class Function:
 
 class Neg(Function):
     """Negation function for tensors."""
-
+    
     @staticmethod
     def forward(ctx: Context, t1: Tensor) -> Tensor:
         """Compute the negation of the input tensor.
 
         Args:
-        ----
             ctx (Context): The context for storing information.
             t1 (Tensor): The input tensor to negate.
 
         Returns:
-        -------
             Tensor: The negated tensor.
-
+            
         """
         return t1.f.neg_map(t1)
 
@@ -91,14 +89,12 @@ class Neg(Function):
         """Compute the gradient of the negation operation.
 
         Args:
-        ----
             ctx (Context): The context for storing information.
             grad_output (Tensor): The gradient of the output tensor.
 
         Returns:
-        -------
             Tensor: The gradient of the input tensor.
-
+            
         """
         return grad_output.f.neg_map(grad_output)
 
@@ -117,12 +113,10 @@ class Inv(Function):
         """Compute the gradient of the inverse operation.
 
         Args:
-        ----
             ctx (Context): The context for storing information.
             grad_output (Tensor): The gradient of the output tensor.
 
         Returns:
-        -------
             Tensor: The gradient of the input tensor.
 
         """
@@ -132,7 +126,7 @@ class Inv(Function):
 
 class Add(Function):
     """Addition function for tensors."""
-
+    
     @staticmethod
     def forward(ctx: Context, t1: Tensor, t2: Tensor) -> Tensor:
         """Compute the sum of two input tensors."""
@@ -144,12 +138,10 @@ class Add(Function):
         """Compute the gradient of the addition operation.
 
         Args:
-        ----
             ctx (Context): The context for storing information.
             grad_output (Tensor): The gradient of the output tensor.
 
         Returns:
-        -------
             Tuple[Tensor, Tensor]: The gradients of the input tensors.
 
         """
@@ -158,7 +150,7 @@ class Add(Function):
 
 class All(Function):
     """Function to check if all elements are true."""
-
+    
     @staticmethod
     def forward(ctx: Context, a: Tensor, dim: Tensor) -> Tensor:
         """Return 1 if all elements are true along the specified dimension."""
@@ -171,7 +163,7 @@ class All(Function):
 # TODO: Implement for Task 2.3.
 class Mul(Function):
     """Multiplication function for tensors."""
-
+    
     @staticmethod
     def forward(ctx: Context, t1: Tensor, t2: Tensor) -> Tensor:
         """Compute the product of two input tensors."""
@@ -183,12 +175,10 @@ class Mul(Function):
         """Compute the gradient of the multiplication operation.
 
         Args:
-        ----
             ctx (Context): The context for storing information.
             grad_output (Tensor): The gradient of the output tensor.
 
         Returns:
-        -------
             Tuple[Tensor, Tensor]: The gradients of the input tensors.
 
         """
@@ -201,7 +191,7 @@ class Mul(Function):
 
 class Sigmoid(Function):
     """Sigmoid activation function for tensors."""
-
+    
     @staticmethod
     def forward(ctx: Context, t1: Tensor) -> Tensor:
         """Compute the sigmoid of the input tensor."""
@@ -214,12 +204,10 @@ class Sigmoid(Function):
         """Compute the gradient of the sigmoid operation.
 
         Args:
-        ----
             ctx (Context): The context for storing information.
             grad_output (Tensor): The gradient of the output tensor.
 
         Returns:
-        -------
             Tensor: The gradient of the input tensor.
 
         """
@@ -233,7 +221,7 @@ class Sigmoid(Function):
 
 class ReLU(Function):
     """ReLU activation function for tensors."""
-
+    
     @staticmethod
     def forward(ctx: Context, t: Tensor) -> Tensor:
         """Compute the ReLU of the input tensor."""
@@ -245,12 +233,10 @@ class ReLU(Function):
         """Compute the gradient of the ReLU operation.
 
         Args:
-        ----
             ctx (Context): The context for storing information.
             grad_output (Tensor): The gradient of the output tensor.
 
         Returns:
-        -------
             Tensor: The gradient of the input tensor.
 
         """
@@ -260,7 +246,7 @@ class ReLU(Function):
 
 class Log(Function):
     """Logarithm function for tensors."""
-
+    
     @staticmethod
     def forward(ctx: Context, t1: Tensor) -> Tensor:
         """Compute the logarithm of the input tensor."""
@@ -272,12 +258,10 @@ class Log(Function):
         """Compute the gradient of the logarithm operation.
 
         Args:
-        ----
             ctx (Context): The context for storing information.
             grad_output (Tensor): The gradient of the output tensor.
 
         Returns:
-        -------
             Tensor: The gradient of the input tensor.
 
         """
@@ -287,7 +271,7 @@ class Log(Function):
 
 class Exp(Function):
     """Exponential function for tensors."""
-
+    
     @staticmethod
     def forward(ctx: Context, t1: Tensor) -> Tensor:
         """Compute the exponential of the input tensor."""
@@ -300,14 +284,12 @@ class Exp(Function):
         """Compute the gradient of the exponential operation.
 
         Args:
-        ----
             ctx (Context): The context for storing information.
             grad_output (Tensor): The gradient of the output tensor.
 
         Returns:
-        -------
             Tensor: The gradient of the input tensor.
-
+            
         """
         (t,) = ctx.saved_values
         return grad_output.f.mul_zip(t, grad_output)
@@ -315,7 +297,7 @@ class Exp(Function):
 
 class Sum(Function):
     """Sum function for tensors."""
-
+    
     @staticmethod
     def forward(ctx: Context, t1: Tensor, dim: int) -> Tensor:
         """Compute the sum of the input tensor along the specified dimension."""
@@ -327,12 +309,10 @@ class Sum(Function):
         """Compute the gradient of the sum operation.
 
         Args:
-        ----
             ctx (Context): The context for storing information.
             grad_output (Tensor): The gradient of the output tensor.
 
         Returns:
-        -------
             Tuple[Tensor, float]: The gradient of the input tensor and a placeholder.
 
         """
@@ -340,9 +320,10 @@ class Sum(Function):
         return grad_output, 0.0
 
 
+
 class LT(Function):
     """Less than comparison function for tensors."""
-
+    
     @staticmethod
     def forward(ctx: Context, t1: Tensor, t2: Tensor) -> Tensor:
         """Compute the element-wise less than comparison between two tensors."""
@@ -354,12 +335,10 @@ class LT(Function):
         """Compute the gradient of the less than operation.
 
         Args:
-        ----
             ctx (Context): The context for storing information.
             grad_output (Tensor): The gradient of the output tensor.
 
         Returns:
-        -------
             Tuple[Tensor, Tensor]: The gradients of the input tensors.
 
         """
@@ -369,7 +348,7 @@ class LT(Function):
 
 class EQ(Function):
     """Equality comparison function for tensors."""
-
+    
     @staticmethod
     def forward(ctx: Context, t1: Tensor, t2: Tensor) -> Tensor:
         """Compute the element-wise equality comparison between two tensors."""
@@ -381,12 +360,10 @@ class EQ(Function):
         """Compute the gradient of the equality operation.
 
         Args:
-        ----
             ctx (Context): The context for storing information.
             grad_output (Tensor): The gradient of the output tensor.
 
         Returns:
-        -------
             Tuple[Tensor, Tensor]: The gradients of the input tensors.
 
         """
@@ -404,7 +381,6 @@ class IsClose(Function):
         """Check if two tensors are close within a specified absolute and relative tolerance.
 
         Args:
-        ----
             ctx (Context): The context for storing information.
             t1 (Tensor): The first tensor to compare.
             t2 (Tensor): The second tensor to compare.
@@ -412,16 +388,15 @@ class IsClose(Function):
             rtol (float): The relative tolerance.
 
         Returns:
-        -------
             Tensor: A tensor indicating whether each element of t1 and t2 are close.
-
+            
         """
         ctx.save_for_backward(t1.shape, t2.shape)
         return t1.f.is_close_zip(t1, t2)
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, Tensor]:
-        """Backward function"""
+        """Backward function"""        
         t1_shape, t2_shape = ctx.saved_values
         return zeros(t1_shape), zeros(t2_shape)
 
@@ -463,13 +438,11 @@ class View(Function):
         """Reshape the input tensor to the specified shape.
 
         Args:
-        ----
             ctx (Context): The context for storing information.
             a (Tensor): The input tensor to reshape.
             shape (Tensor): The desired shape for the output tensor.
 
         Returns:
-        -------
             Tensor: A new tensor with the specified shape.
 
         """
@@ -491,10 +464,9 @@ class View(Function):
             0.0,
         )
 
-
 class Copy(Function):
     """Identity function for tensors, returning the input tensor as is."""
-
+    
     @staticmethod
     def forward(ctx: Context, a: Tensor) -> Tensor:
         """Id function makes contiguous"""
@@ -508,7 +480,6 @@ class Copy(Function):
 
 class MatMul(Function):
     """Matrix multiplication function for tensors."""
-
     @staticmethod
     def forward(ctx: Context, t1: Tensor, t2: Tensor) -> Tensor:
         """Matrix Multiply Forward (module 3)"""
@@ -529,6 +500,7 @@ class MatMul(Function):
             grad_output.f.matrix_multiply(grad_output, transpose(t2)),
             grad_output.f.matrix_multiply(transpose(t1), grad_output),
         )
+        
 
 
 # Helpers for Constructing tensors
@@ -642,7 +614,6 @@ def grad_central_difference(
     """Compute the central difference approximation of the gradient.
 
     Args:
-    ----
         f (Any): The function for which the gradient is being computed.
         *vals (Tensor): The input tensors to the function.
         arg (int): The index of the argument to compute the gradient for.
@@ -650,9 +621,8 @@ def grad_central_difference(
         ind (UserIndex): The index at which to compute the gradient.
 
     Returns:
-    -------
         float: The approximate gradient at the specified index.
-
+        
     """
     x = vals[arg]
     up = zeros(x.shape)
@@ -694,3 +664,5 @@ but was expecting derivative %f from central difference.
             1e-2,
             err_msg=err_msg % (f, vals, x.grad[ind], i, ind, check),
         )
+
+

@@ -37,6 +37,15 @@ variable_count = 1
 class Variable(Protocol):
     """Protocol for defining a variable in the computation graph."""
 
+    def accumulate_derivative(self, x: Any) -> None:
+        """Accumulates the derivative for this variable.
+
+        Args:
+            x: The derivative value to accumulate.
+            
+        """
+        pass
+
     @property
     def unique_id(self) -> int:
         """Returns the unique identifier for the variable."""
